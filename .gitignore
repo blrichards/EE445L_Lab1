@@ -1,1 +1,7 @@
 *.o
+*.map
+*.plg
+*.tra
+*.htm
+*.lnp
+*.bak
