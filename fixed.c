@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +6,6 @@
 
 static inline __attribute__((always_inline)) char digitToASCII(uint8_t digit) 
 {
-	assert(digit < 10);
 	return digit + 0x30;
 }
 
@@ -91,7 +89,7 @@ void ST7735_uBinOut6 (uint32_t value)
 	float decimalValue = (float)value / 64;
 	int intPart = decimalValue;
 	float decPart = decimalValue - intPart;
-	printf("%d", intPart);
+	printf("%d.", intPart);
 	for (int i = 0; i < decimalPlaces; ++i) {
 		decPart *= 10;
 		printf("%d", (uint32_t)decPart % 10);
