@@ -6,3 +6,7 @@
 *.lnp
 *.bak
 *.uvgui.*
+*.crf
+*.dep
+*.uvopt
+*.axf
