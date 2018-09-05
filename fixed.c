@@ -1,12 +1,16 @@
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "fixed.h"
 #include "ST7735.h"
 
-void ConvertToASCII(uint8_t* value)
+static inline __attribute__((always_inline)) char digitToASCII(uint8_t digit) 
 {
-	value[0] = value[0] + 0x30;
+	assert(digit < 10);
+	return digit + 0x30;
 }
+
 /* NAME:
  * DESCRIPTION:	
  * INPUT:
@@ -55,7 +59,7 @@ void ST7735_sDecOut2(int32_t value)
 	
 	while( i < 4 )
 	{
-		ConvertToASCII(&digits[i]);
+		digits[i] = digitToASCII(digits[i]);
 		i++;
 	}
 	
@@ -77,43 +81,21 @@ void ST7735_sDecOut2(int32_t value)
  */
 void ST7735_uBinOut6 (uint32_t value)
 {
-	if( value >= 64000 )
-	{
+	uint8_t decimalPlaces = 2;
+	
+	if (value >= 64000) {
 		PutError(5);
 		return;
 	}
-	uint32_t decimalValue = (value * 100000) / 64000;	//*100000 to have uint available
-	value = decimalValue;
-	
-	uint8_t digits[5] = {0};
-	int i = 4;
-	
-	while( i >= 0 )
-	{
-		digits[i] = decimalValue % 10;
-		value = decimalValue / 10;
-		i--;
+
+	float decimalValue = (float)value / 64;
+	int intPart = decimalValue;
+	float decPart = decimalValue - intPart;
+	printf("%d", intPart);
+	for (int i = 0; i < decimalPlaces; ++i) {
+		decPart *= 10;
+		printf("%d", (uint32_t)decPart % 10);
 	}
-	
-	if (value < 1000)
-	{
-		//put two spaces or move the cursor over
-		i = 2;
-	}
-	
-	if (value < 10000)
-	{
-		//put one spaces or move the cursor over
-		i = 1;
-	}
-	
-	while( i < 5 )
-	{
-		ConvertToASCII(&digits[i]);
-		ST7735_OutChar(digits[i]);
-		i++;
-	}
-	
 }
 
 /* NAME:
