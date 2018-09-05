@@ -1,6 +1,8 @@
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "fixed.h"
 #include "ST7735.h"
 
@@ -53,7 +55,7 @@ void ST7735_sDecOut2(int32_t value)
 	}
 	
 	while( i < 4 ){
-		ConvertToASCII(&digits[i]);
+		digits[i] = digitToASCII(digits[i]);
 		i++;
 	}
 	
@@ -74,6 +76,7 @@ void ST7735_sDecOut2(int32_t value)
  */
 void ST7735_uBinOut6 (uint32_t value)
 {
+	uint8_t outSize = 6;
 	uint8_t decimalPlaces = 2;
 	
 	if (value >= 64000) {
@@ -81,14 +84,22 @@ void ST7735_uBinOut6 (uint32_t value)
 		return;
 	}
 
+	char buf[6];
 	float decimalValue = (float)value / 64;
 	int intPart = decimalValue;
 	float decPart = decimalValue - intPart;
-	printf("%d.", intPart);
+	sprintf(buf, "%d.", intPart);
+	uint8_t len = strlen(buf);
 	for (int i = 0; i < decimalPlaces; ++i) {
 		decPart *= 10;
-		printf("%d", (uint32_t)decPart % 10);
+		if (i == decimalPlaces - 1)
+			decPart = round(decPart);
+		sprintf(&buf[len + i], "%d", (uint32_t)decPart % 10);
 	}
+	uint8_t padding = outSize - strlen(buf);
+	for (int i = 0; i < padding; ++i)
+		printf(" ");
+	printf("%s", buf);
 }
 
 /* NAME:
@@ -98,14 +109,10 @@ void ST7735_uBinOut6 (uint32_t value)
  */
 void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, int32_t maxY)
 {
-	ST7735_FillScreen(ST7735_BLACK); 
-  ST7735_SetCursor(0,0);
-	printf("%s", title);
-	xMin = minX;
-	xMax = maxX;
-	yMin = minY;
-	yMax = maxY;
-	return;
+	// ST7735_FillRect();
+  // ST7735_SetCursor(0,0);
+	// ST7735_OutString(title);
+	
 }
 
 /* NAME:
@@ -115,10 +122,10 @@ void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, in
  */
 void ST7735_XYplot(uint32_t num, int32_t bufX[], int32_t bufY[])
 {
-	for(int i = 0; i < num; i++){
+	/*for(int i = 0; i < num; i++){
 		
 		if(bufX[i] >= xMin && bufX[i] <= xMax && bufY[i] >= yMin && bufY[i] <= yMax)
 			ST7735_DrawPixel(bufX[i]/1000, bufY[i]/1000, ST7735_WHITE);
 	}
-	
+	*/
 }
