@@ -95,7 +95,7 @@ const int32_t StarYbuf[50] = {190, 172, 154, 136, 118, 100, 81, 63, 45, 27, 9, 2
 };
 
 int main(void){uint32_t i;
-  PLL_Init(); 								// origional PLL_Init(Bus80MHz); 
+  PLL_Init(Bus80MHz); 
   PortF_Init();
   ST7735_InitR(INITR_REDTAB);
   while(1){
