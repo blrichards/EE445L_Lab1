@@ -6,6 +6,8 @@
 #include "fixed.h"
 #include "ST7735.h"
 
+int32_t xMin, xMax, yMin, yMax = 0;
+
 static inline __attribute__((always_inline)) char digitToASCII(uint8_t digit) 
 {
 	return digit + 0x30;
@@ -29,44 +31,41 @@ void PutError (uint8_t points)
  */
 void ST7735_sDecOut2(int32_t value)
 {
-	uint8_t digits[5] = {0};
-	digits[4] = NULL;
-	int8_t i = 3;
-	int32_t origionalValue = value;
-		
+	char buf[6];
+	buf[5] = NULL;
 	if( value <= -10000 ){
 		printf("-");
 		PutError(4);
 		return;
 	}
 	if( value >= 10000 ){
+		printf(" ");
 		PutError(4);
 		return;
 	}
-
-	if( value < 0 )	value = value * -1;
 	
+	int32_t originalValue = value;
+	if (value < 0) value *= -1;
+	float decimal = (float)value / 100;
+	decimal = (decimal - value)*100;
 	
-	// TODO - need the decimal points for this stuff
-	while( i >= 0 ){
-		digits[i] = value % 10;
-		value = value / 10;
-		i--;
+	if( originalValue < 0 && originalValue > -1000 ) printf(" ");
+	if( originalValue >= 0 && originalValue < 1000 ) printf(" ");
+	if( originalValue <= -1000 && originalValue > -10000 ) printf("-");
+	if( originalValue >= 1000 && originalValue < 10000 ) printf(" ");
+	
+	for( int i = 4; i >= 0; i-- ){
+		if( i == 2 ) buf[i] = '.';
+		else{
+			buf[i] = digitToASCII(value % 10);
+			value = value/10;
+		}
 	}
 	
-	while( i < 4 ){
-		digits[i] = digitToASCII(digits[i]);
-		i++;
-	}
+	if( buf[0] == '0' && originalValue >= 0) buf[0] = ' ';
+	if( buf[0] == '0' && originalValue < 0) buf[0] = '-';
+	printf("%s", buf);
 	
-	if (origionalValue < 1000 && origionalValue >= 0) digits[0] = ' ';
-	if (origionalValue < 0 && origionalValue > -1000) digits[0] = '-';
-	
-	for(int i = 0; i < 4; i++){
-		if(i == 2) printf(".");
-		printf("%c", digits[i]);
-	}
-	return;
 }
 
 /* NAME:
@@ -109,10 +108,14 @@ void ST7735_uBinOut6 (uint32_t value)
  */
 void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, int32_t maxY)
 {
-	// ST7735_FillRect();
-  // ST7735_SetCursor(0,0);
-	// ST7735_OutString(title);
-	
+	 // ST7735_FillRect();
+	ST7735_FillScreen(0);
+  ST7735_SetCursor(0,0);
+	ST7735_OutString(title);
+	xMin = minX; 
+	xMax = maxX; 
+	yMin = minY; 
+	yMax = maxY; 
 }
 
 /* NAME:
@@ -122,10 +125,9 @@ void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, in
  */
 void ST7735_XYplot(uint32_t num, int32_t bufX[], int32_t bufY[])
 {
-	/*for(int i = 0; i < num; i++){
+	for(int i = 0; i < num; i++){
 		
 		if(bufX[i] >= xMin && bufX[i] <= xMax && bufY[i] >= yMin && bufY[i] <= yMax)
-			ST7735_DrawPixel(bufX[i]/1000, bufY[i]/1000, ST7735_WHITE);
+			ST7735_DrawPixel((127*(bufX[i] - xMin)/ (xMax - xMin)), (32 + 127 *(yMax - bufY[i])/ (yMax - yMin)), ST7735_WHITE);
 	}
-	*/
 }
