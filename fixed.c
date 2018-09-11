@@ -1,3 +1,13 @@
+// ******** fixed.h ************** 
+// Authors: Ryan Mitchell and Ben Richards
+// Initial Creation Date: 9/3/2018
+// Description: File to handle fixed point numbers
+// and their applications with the ST7735
+// Lab Number: Lab01
+// TA: Zee Lv
+// Date of last revision: 9/10/2018
+// Hardware Configuration: N/A
+
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -108,7 +118,6 @@ void ST7735_uBinOut6 (uint32_t value)
  */
 void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, int32_t maxY)
 {
-	 // ST7735_FillRect();
 	ST7735_FillScreen(0);
   ST7735_SetCursor(0,0);
 	ST7735_OutString(title);
@@ -128,6 +137,9 @@ void ST7735_XYplot(uint32_t num, int32_t bufX[], int32_t bufY[])
 	for(int i = 0; i < num; i++){
 		
 		if(bufX[i] >= xMin && bufX[i] <= xMax && bufY[i] >= yMin && bufY[i] <= yMax)
-			ST7735_DrawPixel((127*(bufX[i] - xMin)/ (xMax - xMin)), (32 + 127 *(yMax - bufY[i])/ (yMax - yMin)), ST7735_WHITE);
+			
+			ST7735_DrawPixel((127*(bufX[i] - xMin)/ (xMax - xMin)), 
+											 (32 + 127 *(yMax - bufY[i])/ (yMax - yMin)), 
+												ST7735_WHITE);
 	}
 }

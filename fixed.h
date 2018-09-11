@@ -1,8 +1,11 @@
-// filename ******** fixed.h ************** 
-// possible header file for Lab 1 Spring 2018
-// feel free to change the specific syntax of your system
-// Ryan Mitchell
-// Ben Richards
+// ******** fixed.h ************** 
+// Authors: Ryan Mitchell and Ben Richards
+// Initial Creation Date: 9/3/2018
+// Description: Header file for fixed.c
+// Lab Number: Lab01
+// TA: Zee Lv
+// Date of last revision: 9/10/2018
+// Hardware Configuration: N/A
 
 #include <stdint.h>
 
